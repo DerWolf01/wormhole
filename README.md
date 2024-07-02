@@ -1,2 +1,2 @@
-# wormhole
-A socket library written in dart to make your life easier by allowing you to easily build an structured socket server 
+A sample command-line application with an entrypoint in `bin/`, library code
+in `lib/`, and example unit test in `test/`.
