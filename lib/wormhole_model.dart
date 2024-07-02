@@ -1,10 +1,4 @@
-import 'package:wormhole/reflector.dart';
+import 'package:wormhole/component.dart';
 
-@reflector
+@component
 class WormholeModel {}
-
-runCheck() {
-  for (var value in reflector.annotatedClasses) {
-    print(value);
-  }
-}

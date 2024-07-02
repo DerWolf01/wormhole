@@ -2,7 +2,7 @@
 // https://github.com/dart-lang/reflectable.
 
 import 'dart:core';
-import 'package:wormhole/reflector.dart' as prefix0;
+import 'package:wormhole/component.dart' as prefix0;
 import 'package:wormhole/wormhole_model.dart' as prefix1;
 
 // ignore_for_file: camel_case_types

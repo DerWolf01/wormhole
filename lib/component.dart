@@ -4,4 +4,4 @@ class Reflector extends Reflectable {
   const Reflector() : super(typeCapability, libraryCapability);
 }
 
-const Reflector reflector = Reflector();
+const Reflector component = Reflector();
