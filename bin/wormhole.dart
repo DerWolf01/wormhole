@@ -13,3 +13,9 @@ void main(List<String> arguments) {
     },
   );
 }
+
+runCheck() {
+  for (var value in reflector.annotatedClasses) {
+    print(value);
+  }
+}
