@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:get_it/get_it.dart';
-import 'package:wormhole/server/server.dart';
-import 'package:wormhole/server/session/sessions.dart';
+import 'package:server/session/sessions.dart';
+import 'package:server/socket_server/socket_server.dart';
 
 var getIt = GetIt.instance;
-void setupGetIt() async {
+Future<void> setupGetIt() async {
   var server = await SocketServer.init();
   if (server != null) {
     getIt.registerSingleton<SocketServer>(server);

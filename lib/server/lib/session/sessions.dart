@@ -1,4 +1,4 @@
-import 'package:wormhole/server/session/session.dart';
+import 'package:server/session/session.dart';
 
 class Sessions {
   final List<UserSession> _sessions = [];

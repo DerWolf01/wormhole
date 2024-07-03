@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 class UserSession {
@@ -14,7 +15,8 @@ class UserSession {
     _socket.listen(
       (data) {
         // Handle incoming data from the client
-        print('Received data: $data');
+        print('Received data: ${utf8.decode(data)}');
+        send("Hello from server");
       },
       onError: (error) {
         // Handle socket error

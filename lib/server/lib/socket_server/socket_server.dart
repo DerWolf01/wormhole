@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:wormhole/server/get_it/get_it.dart';
-import 'package:wormhole/server/session/session.dart';
-import 'package:wormhole/server/session/sessions.dart';
-
-
+import 'package:server/get_it/get_it.dart';
+import 'package:server/session/session.dart';
+import 'package:server/session/sessions.dart';
 
 class SocketServer {
   final String host;
@@ -28,6 +26,7 @@ class SocketServer {
   }
 
   listen() {
+    print("listening on $host$port");
     _socket.listen(
       (socket) {
         var session = UserSession(socket);

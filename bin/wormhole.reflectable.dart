@@ -3,7 +3,6 @@
 
 import 'dart:core';
 import 'package:wormhole/component.dart' as prefix0;
-import 'package:wormhole/wormhole_model.dart' as prefix1;
 
 // ignore_for_file: camel_case_types
 // ignore_for_file: implementation_imports
@@ -17,45 +16,8 @@ import 'package:reflectable/src/reflectable_builder_based.dart' as r;
 import 'package:reflectable/reflectable.dart' as r show Reflectable;
 
 final _data = <r.Reflectable, r.ReflectorData>{
-  const prefix0.Reflector(): r.ReflectorData(
-      <m.TypeMirror>[
-        r.NonGenericClassMirrorImpl(
-            r'WormholeModel',
-            r'.WormholeModel',
-            134217735,
-            0,
-            const prefix0.Reflector(),
-            const <int>[-1],
-            null,
-            null,
-            -1,
-            {},
-            {},
-            {},
-            0,
-            -1,
-            const <int>[-1],
-            null,
-            {})
-      ],
-      null,
-      null,
-      <Type>[prefix1.WormholeModel],
-      1,
-      {},
-      {},
-      <m.LibraryMirror>[
-        r.LibraryMirrorImpl(
-            r'',
-            Uri.parse('package:wormhole/wormhole_model.dart'),
-            const prefix0.Reflector(),
-            const <int>[-1],
-            {},
-            {},
-            null,
-            {})
-      ],
-      [])
+  const prefix0.Reflector(): r.ReflectorData(<m.TypeMirror>[], null, null,
+      <Type>[], 0, {}, {}, <m.LibraryMirror>[], [])
 };
 
 final _memberSymbolMap = null;
