@@ -1,5 +1,6 @@
 import 'package:server/component/component.dart';
 import 'package:server/controller/controller.dart';
+import 'package:server/messages/simple_message/simple_message.dart';
 import 'package:server/session/session.dart';
 
 @Controller("/hinda")
@@ -7,9 +8,9 @@ import 'package:server/session/session.dart';
 class ControllerExample {
   ControllerExample();
 
-  @Get("/is-sweet")
+  @RequestHandler("/is-sweet")
   Future<SimpleMessage> clientSaysHello(SimpleMessage message) async {
-    print("helloServer --> Got data: ${message.message}");
-    return SimpleMessage("Hello from the server!");
+    print("clientSaysHello --> ${message.message}");
+    return SimpleMessage("Server anaswers your hello!");
   }
 }

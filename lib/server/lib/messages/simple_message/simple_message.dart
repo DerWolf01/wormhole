@@ -13,7 +13,7 @@ class SimpleMessage extends Model {
     };
   }
 
-  SimpleMessage.fromMap(Map map) : message = map["message"];
+  SimpleMessage.fromMap(Map<String, dynamic> map) : message = map["message"];
   String toJson() {
     return '{message: $message}';
   }

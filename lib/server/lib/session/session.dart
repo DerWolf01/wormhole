@@ -1,30 +1,31 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:server/component/component.dart';
-import 'package:server/controller/controller.dart';
-import 'package:server/controller/controller_service.dart';
 import 'package:server/get_it/get_it.dart';
-import 'package:server/messages/socket_message/socket_message.dart' as message;
-import 'package:server/model/model.dart';
+import 'package:server/messages/socket_message/socket_message_service.dart';
 
 class UserSession {
   final Socket _socket;
-  final String _sessionId;
+  final String sessionId;
 
   UserSession(
     this._socket,
-  ) : _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
+  ) : sessionId = DateTime.now().millisecondsSinceEpoch.toString() {
+    socketMessageService = SocketMessageService(this);
+  }
+
+  late final SocketMessageService socketMessageService;
 
   void start() {
-    print('User session started with session ID: $_sessionId');
+    print('User session started with session ID: $sessionId');
 
     _socket.listen(
       (data) {
-        // Handle incoming data from the client
-        print('Received data: ${utf8.decode(data)}');
-        send(jsonEncode(message.SocketMessage(
-                "/hinda/is-sweet", SimpleMessage("Hello my love"))
-            .toMap()));
+        final decodedData = utf8.decode(data);
+        print('Received data: $decodedData');
+        print(decodedData);
+        final json = jsonDecode(decodedData);
+        print("json: $json");
+        socketMessageService.receive(json);
       },
       onError: (error) {
         // Handle socket error
@@ -37,26 +38,6 @@ class UserSession {
     );
   }
 
-  Future receive(dynamic data) async {
-    final decodedData = utf8.decode(data);
-    print(decodedData);
-    final json = jsonDecode(decodedData);
-    if (json["path"] == null) {
-      print('invalid data $decodedData');
-      return;
-    }
-
-    var path = json["path"];
-    print('path: $path');
-    var pingedMethod = getIt<ControllerService>().methodMirrorByFullPath(path);
-    if (pingedMethod is AnnotatedMethod<RequestHandler>) {
-      var res = pingedMethod.invoke([json]);
-      if (res is Model) {
-        send(message.SocketMessage(json["path"], res).toJson());
-      }
-    }
-  }
-
   Future<void> send(String message) async {
     _socket.write(message);
     return await _socket.done;
@@ -64,23 +45,5 @@ class UserSession {
 
   Future<void> close() async {
     return await _socket.close();
-  }
-}
-
-@component
-class SimpleMessage extends Model {
-  const SimpleMessage(this.message);
-  final String message;
-
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      "message": message,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'SimpleMessage{message: $message}';
   }
 }

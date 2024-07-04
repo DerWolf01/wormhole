@@ -1,4 +1,3 @@
-
 import 'package:server/component/component.dart';
 
 @component
@@ -19,11 +18,7 @@ class RequestHandler {
 }
 
 @component
-class Post extends RequestHandler {
-  const Post(super.path);
-}
-
-@component
-class Get extends RequestHandler {
-  const Get(super.path);
+class ResponseHandler {
+  const ResponseHandler(this.path);
+  final String path;
 }

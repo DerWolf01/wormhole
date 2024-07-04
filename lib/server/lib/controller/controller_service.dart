@@ -19,20 +19,26 @@ class ControllerService {
   }
 
   Object controllerByFullPath(String fullPath) {
+    print(_controllerMap);
     return _controllerMap[_pathByFullPath(fullPath)];
   }
 
   String _pathByFullPath(String rawFullPath) {
     var path = rawFullPath;
-    if (path.characters.first == "/") {
-      path = "/";
-      for (int i = 1; i < rawFullPath.characters.length; i++) {
-        var char = rawFullPath.characters.elementAt(i);
-        if (char == "/") {
-          break;
+    try {
+      if (path.characters.first == "/") {
+        path = "/";
+        for (int i = 1; i < rawFullPath.characters.length; i++) {
+          var char = rawFullPath.characters.elementAt(i);
+          if (char == "/") {
+            break;
+          }
+          path += char;
         }
-        path += char;
       }
+    } catch (e) {
+      print(e);
+      throw Error.safeToString("No Endpoint found for $rawFullPath");
     }
     return path;
   }
@@ -44,17 +50,22 @@ class ControllerService {
     return methodPath;
   }
 
-  dynamic callMethodFromMap(AnnotatedMethod m, Map map) {
+  dynamic callMethodUsingMap(AnnotatedMethod m, Map map) {
     var argument = m.invokeMethodArgumentInstance(
         constructorName: "fromMap", positionalArguments: [map]);
     return m.partOf.invoke(m.method.simpleName, [argument]);
   }
 
-  AnnotatedMethod? methodMirrorByFullPath(String fullPath) {
+  AnnotatedMethod? methodMirrorByFullPath<AnotatedWith extends RequestHandler>(
+      String fullPath) {
     var controller = controllerByFullPath(fullPath);
+    print("controller by full path --> $controller");
     var mPath = methodPath(fullPath);
+    print("method path --> $mPath");
+
     var reflectable = component.reflect(controller);
-    AnnotatedMethod? res = methodsAnnotatedWith<RequestHandler>(controller)
+    print("reflected-controller --> $reflectable");
+    AnnotatedMethod? res = methodsAnnotatedWith<AnotatedWith>(controller)
         .where(
           (e) => e.annotation.path == mPath,
         )

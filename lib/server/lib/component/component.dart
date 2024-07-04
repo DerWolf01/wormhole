@@ -4,13 +4,13 @@ import 'package:server/model/model.dart';
 class Reflector extends Reflectable {
   const Reflector()
       : super(
+          newInstanceCapability,
+          instanceInvokeCapability,
           typeCapability,
           libraryCapability,
           metadataCapability,
           declarationsCapability,
           typeAnnotationQuantifyCapability,
-          instanceInvokeCapability,
-          newInstanceCapability,
         );
 }
 
@@ -61,13 +61,29 @@ class AnnotatedMethod<AnotatedWith> {
 
   dynamic invokeMethodArgumentInstance(
       {required constructorName, required List<dynamic> positionalArguments}) {
-    var res = classMirror(methodArgumentType())
-        .newInstance("$constructorName", positionalArguments);
-    return res;
+    try {
+      var res = classMirror(methodArgumentType())
+          .newInstance("$constructorName", positionalArguments);
+      return res;
+    } catch (e) {
+      print(e);
+    }
   }
 
   Model? invoke(List<dynamic> positionalArguments) {
     return instanceMirror(partOf).invoke(method.simpleName, positionalArguments)
         as Model?;
+  }
+
+  Future<T> invokeUsingMap<T extends Model?>(Map map) async {
+    dynamic argument;
+    try {
+      argument = invokeMethodArgumentInstance(
+          constructorName: "fromMap", positionalArguments: [map]);
+    } catch (e) {
+      print(e);
+    }
+    return await instanceMirror(partOf).invoke(method.simpleName, [argument])
+        as T;
   }
 }
