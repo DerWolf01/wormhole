@@ -70,4 +70,16 @@ class AnnotatedMethod<AnotatedWith> {
     return instanceMirror(partOf).invoke(method.simpleName, positionalArguments)
         as Model?;
   }
+
+  Future<T> invokeUsingMap<T extends Model?>(Map map) async {
+    dynamic argument;
+    try {
+      argument = invokeMethodArgumentInstance(
+          constructorName: "fromMap", positionalArguments: [map]);
+    } catch (e) {
+      print(e);
+    }
+    return await instanceMirror(partOf).invoke(method.simpleName, [argument])
+        as T;
+  }
 }

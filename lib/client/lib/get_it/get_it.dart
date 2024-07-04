@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:client/controller/controller_service.dart';
+import 'package:client/messages/socket_message/socket_message_service.dart';
 import 'package:client/socket/client_socket.dart';
 import 'package:get_it/get_it.dart';
 
@@ -9,5 +10,6 @@ Future<void> setupGetIt() async {
   if (client != null) {
     getIt.registerSingleton<ClientSocket>(client);
     getIt.registerSingleton<ControllerService>(ControllerService());
+    getIt.registerSingleton<SocketMessageService>(SocketMessageService());
   }
 }

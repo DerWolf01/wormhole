@@ -1,12 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:client/messages/socket_message/socket_message.dart' as message;
-
-import 'package:client/component/component.dart';
-import 'package:client/controller/controller.dart';
-import 'package:client/controller/controller_service.dart';
 import 'package:client/get_it/get_it.dart';
-import 'package:client/model/model.dart';
+import 'package:client/messages/socket_message/socket_message_service.dart';
+import 'package:client/messages/socket_message/socket_message.dart' as messages;
 
 class ClientSocket {
   Socket? _socket;
@@ -37,14 +33,14 @@ class ClientSocket {
     });
   }
 
-  Future<void> send(String message) async {
+  Future<void> send(messages.SocketMessage message) async {
     if (_socket == null) {
       print('Not connected to any server');
       return;
     }
 
     try {
-      _socket?.write(message);
+      _socket?.write(message.toJson());
       print('Sent: $message');
       return await _socket?.done;
     } catch (e) {
@@ -55,21 +51,9 @@ class ClientSocket {
   Future<void> receive(dynamic data) async {
     final decodedData = utf8.decode(data);
     print(decodedData);
-    final json = jsonDecode(decodedData);
-    if (json["path"] == null) {
-      print('invalid data $decodedData');
-      return;
-    }
+    final Map<String, dynamic> json = jsonDecode(decodedData);
 
-    var path = json["path"];
-    print('path: $path');
-    var pingedMethod = getIt<ControllerService>().methodMirrorByFullPath(path);
-    if (pingedMethod is AnnotatedMethod<RequestHandler>) {
-      var res = pingedMethod.invoke([json]);
-      if (res is Model) {
-        send(message.SocketMessage(json["path"], res).toJson());
-      }
-    }
+    return await getIt<SocketMessageService>().receive(json);
   }
 
   Future<void> disconnect() async {
@@ -85,4 +69,10 @@ class ClientSocket {
       print('Failed to disconnect: $e');
     }
   }
+}
+
+ClientSocket get clientSocket => getIt<ClientSocket>();
+
+send(messages.SocketMessage message) async {
+  await clientSocket.send(message);
 }

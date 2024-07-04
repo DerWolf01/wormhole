@@ -50,11 +50,12 @@ class ControllerService {
     return m.partOf.invoke(m.method.simpleName, [argument]);
   }
 
-  AnnotatedMethod? methodMirrorByFullPath(String fullPath) {
+  AnnotatedMethod? methodMirrorByFullPath<AnotatedWith extends RequestType>(
+      String fullPath) {
     var controller = controllerByFullPath(fullPath);
     var mPath = methodPath(fullPath);
     var reflectable = component.reflect(controller);
-    AnnotatedMethod? res = methodsAnnotatedWith<RequestHandler>(controller)
+    AnnotatedMethod? res = methodsAnnotatedWith<AnotatedWith>(controller)
         .where(
           (e) => e.annotation.path == mPath,
         )

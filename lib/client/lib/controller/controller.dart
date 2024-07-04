@@ -12,17 +12,17 @@ class Controller {
 }
 
 @component
-class RequestHandler {
-  const RequestHandler(this.path);
+abstract class RequestType {
+  const RequestType(this.path);
   final String path;
 }
 
 @component
-class Post extends RequestHandler {
-  const Post(super.path);
+class RequestHandler extends RequestType {
+  const RequestHandler(super.path);
 }
 
 @component
-class Get extends RequestHandler {
-  const Get(super.path);
+class ResponseHandler extends RequestType {
+  const ResponseHandler(super.path);
 }

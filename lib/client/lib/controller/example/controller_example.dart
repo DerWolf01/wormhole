@@ -9,9 +9,9 @@ import 'package:client/messages/simple_message/simple_message.dart';
 class ControllerExample {
   ControllerExample();
 
-  @Get("/is-sweet")
-  Future<SimpleMessage> clientSaysHello(SimpleMessage message) async {
-    print("helloServer --> Got data: ${message.message}");
-    return SimpleMessage("Hello from the server!");
+  @ResponseHandler("/is-sweet")
+  Future<SimpleMessage> serverAnswersHello(SimpleMessage message) async {
+    print("serverAnswersHello --> ${message.message}");
+    return SimpleMessage("Client Says Hello!");
   }
 }
