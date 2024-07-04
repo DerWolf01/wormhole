@@ -9,7 +9,6 @@ Future<void> setupGetIt() async {
   var client = await ClientSocket.connect();
   if (client != null) {
     getIt.registerSingleton<ClientSocket>(client);
-    getIt.registerSingleton<ControllerService>(ControllerService());
     getIt.registerSingleton<SocketMessageService>(SocketMessageService());
   }
 }

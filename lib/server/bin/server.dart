@@ -10,6 +10,6 @@ Future<void> main(List<String> arguments) async {
   initializeReflectable();
   await setupGetIt();
 
-  getIt<ControllerService>().registerController(ControllerExample());
+  ControllerService().registerController(ControllerExample());
   getIt<SocketServer>().listen();
 }

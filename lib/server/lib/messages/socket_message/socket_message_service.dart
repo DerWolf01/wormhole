@@ -12,7 +12,7 @@ class SocketMessageService extends SocketMessageServiceNotifier
     with SocketMessageTypeRecognizer {
   SocketMessageService(this.userSession);
   final UserSession userSession;
-  ControllerService get controllerService => getIt<ControllerService>();
+  ControllerService controllerService = ControllerService();
 
   Future receive(Map<String, dynamic> message) async {
     assert(message["path"] != null, 'invalid data $message');

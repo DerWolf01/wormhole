@@ -9,7 +9,7 @@ import 'package:client/socket/client_socket.dart';
 
 class SocketMessageService extends SocketMessageServiceNotifier
     with SocketMessageTypeRecognizer {
-  ControllerService get controllerService => getIt<ControllerService>();
+  ControllerService controllerService = ControllerService();
   ClientSocket get clientSocket => getIt<ClientSocket>();
   Future receive(Map<String, dynamic> message) async {
     if (message["path"] == null) {

@@ -7,7 +7,12 @@ import 'package:characters/characters.dart';
 class ControllerService {
   final Map<String, dynamic> _controllerMap = {};
 
-  ControllerService();
+  static ControllerService? _instance;
+  ControllerService._internal();
+  factory ControllerService() {
+    _instance ??= ControllerService._internal();
+    return _instance!;
+  }
 
   registerController(dynamic controller) {
     var path = Controller.byImplementation(controller).path;
