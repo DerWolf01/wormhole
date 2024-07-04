@@ -15,6 +15,7 @@ class SocketServer {
 
   static Future<SocketServer?> init(
       {String host = 'localhost', int port = 3000}) async {
+    setupGetIt();
     try {
       final server = await ServerSocket.bind("localhost", 3000);
 

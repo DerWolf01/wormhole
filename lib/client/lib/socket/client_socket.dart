@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:client/controller/controller_service.dart';
 import 'package:client/get_it/get_it.dart';
 import 'package:client/messages/socket_message/socket_message_service.dart';
 import 'package:client/messages/socket_message/socket_message.dart' as messages;
@@ -8,6 +9,7 @@ class ClientSocket {
   Socket? _socket;
 
   static Future<ClientSocket?> connect() async {
+    await setupGetIt();
     var client = ClientSocket();
     await client._connect('localhost', 3000);
     client.listen();
