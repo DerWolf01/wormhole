@@ -3,6 +3,7 @@ import 'package:client/component/component.dart';
 import 'package:client/controller/controller.dart';
 import 'package:reflectable/mirrors.dart';
 import 'package:reflectable/reflectable.dart';
+export './controller_service.dart';
 
 class ControllerService {
   final Map<String, dynamic> _controllerMap = {};

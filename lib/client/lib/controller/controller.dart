@@ -1,4 +1,5 @@
 import 'package:client/component/component.dart';
+export './controller.dart';
 
 @component
 class Controller {

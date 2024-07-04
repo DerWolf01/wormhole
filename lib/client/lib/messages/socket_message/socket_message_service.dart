@@ -6,6 +6,7 @@ import 'package:client/messages/socket_message/socket_message.dart';
 import 'package:client/messages/socket_response/socket_response.dart';
 import 'package:client/model/model.dart';
 import 'package:client/socket/client_socket.dart';
+export './socket_message_service.dart';
 
 class SocketMessageService extends SocketMessageServiceNotifier
     with SocketMessageTypeRecognizer {

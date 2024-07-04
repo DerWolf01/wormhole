@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:client/controller/controller_service.dart';
 import 'package:client/get_it/get_it.dart';
 import 'package:client/messages/socket_message/socket_message_service.dart';
 import 'package:client/messages/socket_message/socket_message.dart' as messages;
+export './client_socket.dart';
 
 class ClientSocket {
   Socket? _socket;
