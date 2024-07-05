@@ -8,3 +8,4 @@ export 'package:wormhole/common/messages/socket_request/socket_request.dart';
 export 'package:wormhole/common/messages/socket_response/socket_response.dart';
 export 'package:wormhole/client/client.dart';
 export 'package:wormhole/server/socket_server/socket_server.dart';
+#export 'common/controller/controller_service.dart';
