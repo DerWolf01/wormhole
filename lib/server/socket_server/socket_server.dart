@@ -19,6 +19,7 @@ class SocketServer {
 
       _instance ??=
           SocketServer._internal(socket: server, host: host, port: port);
+      print("listening on localhost:3000");
     } catch (e) {
       print('Failed to start server: $e');
       return null;
