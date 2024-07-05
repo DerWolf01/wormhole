@@ -1,5 +1,6 @@
 import 'package:client/model/model.dart';
 import 'package:reflectable/reflectable.dart';
+export './component.dart';
 
 class Reflector extends Reflectable {
   const Reflector()
@@ -48,6 +49,7 @@ List<AnnotatedMethod<T>> methodsAnnotatedWith<T>(dynamic element) {
       .toList();
 }
 
+@component
 class AnnotatedMethod<AnotatedWith> {
   final dynamic partOf;
   final MethodMirror method;
