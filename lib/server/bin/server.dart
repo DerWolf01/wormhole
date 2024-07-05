@@ -1,3 +1,5 @@
+library;
+
 import 'dart:io';
 
 import 'package:server/controller/controller_service.dart';
