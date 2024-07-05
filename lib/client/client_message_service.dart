@@ -6,7 +6,7 @@ import 'package:wormhole/common/messages/socket_message/socket_message.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
 import 'package:wormhole/common/model/model.dart';
 
-export 'client_message_service.dart';
+
 
 class ClientMessageService extends ClientMessageServiceNotifier
     with SocketMessageTypeRecognizer {
