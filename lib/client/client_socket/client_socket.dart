@@ -6,7 +6,7 @@ import 'package:wormhole/common/messages/socket_message/socket_message.dart'
 
 export 'client_socket.dart';
 
-class ClientSocket {
+class ClientSocket extends ClientSocketChangeNotifier {
   Socket? _socket;
 
   static ClientSocket? _instance;
@@ -24,8 +24,12 @@ class ClientSocket {
   }
   Future<void> _connect(String host, int port) async {
     try {
+      callPreConnectCallbacks();
       _socket = await Socket.connect(host, port);
-      print('Connected to $host:$port');
+      if (_socket == null) {
+        throw Exception('Failed to connect. ');
+      }
+      callPostConnectCallbacks(this);
     } catch (e) {
       print('Failed to connect: $e');
     }
@@ -42,6 +46,7 @@ class ClientSocket {
   }
 
   Future<void> send(messages.SocketMessage message) async {
+    
     if (_socket == null) {
       print('Not connected to any server');
       return;
@@ -83,4 +88,37 @@ ClientSocket get clientSocket => ClientSocket();
 
 send(messages.SocketMessage message) async {
   await clientSocket.send(message);
+}
+
+abstract class ClientSocketChangeNotifier {
+  List<Function()> preConnectCallbacks = [];
+  List<Function(ClientSocket)> postConnectCallbacks = [];
+
+  void addPreConnectCallback(Function() callback) {
+    preConnectCallbacks.add(callback);
+  }
+
+  void removePreConnectCallback(Function(Socket) callback) {
+    preConnectCallbacks.remove(callback);
+  }
+
+  void addPostConnectCallback(Function(ClientSocket) callback) {
+    postConnectCallbacks.add(callback);
+  }
+
+  void removePostConnectCallback(Function(ClientSocket) callback) {
+    postConnectCallbacks.remove(callback);
+  }
+
+  void callPreConnectCallbacks() {
+    for (var callback in preConnectCallbacks) {
+      callback();
+    }
+  }
+
+  void callPostConnectCallbacks(ClientSocket session) {
+    for (var callback in postConnectCallbacks) {
+      callback(session);
+    }
+  }
 }

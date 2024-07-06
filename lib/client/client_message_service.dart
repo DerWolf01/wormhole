@@ -4,9 +4,8 @@ import 'package:wormhole/common/controller/controller.dart';
 import 'package:wormhole/common/controller/controller_service.dart';
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
+import 'package:wormhole/common/middleware/middleware_service.dart';
 import 'package:wormhole/common/model/model.dart';
-
-
 
 class ClientMessageService extends ClientMessageServiceNotifier
     with SocketMessageTypeRecognizer {
@@ -34,9 +33,22 @@ class ClientMessageService extends ClientMessageServiceNotifier
     var pingedMethod =
         controllerService.methodMirrorByFullPath<RequestHandler>(path);
     if (pingedMethod is AnnotatedMethod<RequestHandler>) {
+      Model? argument;
+      try {
+        pingedMethod.invokeMethodArgumentInstance(
+            constructorName: "fromMap", positionalArguments: [message]);
+        if (argument == null) {
+          throw Exception("Couldn't parse Model.");
+        }
+      } catch (e) {
+        throw Exception("""Couldn't parse Model.
+$e""");
+      }
+      MiddlewareService().preHandle(path, argument);
       var res = await pingedMethod.invokeUsingMap(message);
       if (res is Model) {
-        clientSocket.send(SocketResponse(message["path"], res));
+        await clientSocket.send(SocketResponse(message["path"], res));
+        MiddlewareService().postHandle(path, argument);
       }
     }
   }

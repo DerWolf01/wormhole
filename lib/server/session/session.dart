@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:wormhole/server/server_message_service.dart';
+import 'package:wormhole/server/session/sessions.dart';
 
 class UserSession {
   final Socket _socket;
@@ -29,11 +30,12 @@ class UserSession {
       },
       onError: (error) {
         // Handle socket error
-        print('Socket error: $error');
+        throw Exception('Socket error: $error');
       },
       onDone: () {
         // Handle socket closed
         print('Socket closed');
+        Sessions().removeSession(this);
       },
     );
   }
