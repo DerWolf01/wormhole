@@ -21,6 +21,7 @@ class MiddlewareService {
   }
 
   void preHandle(String path, Model data) {
+    print("middleware preHandle");
     // Apply each middleware in the order they were added
     for (var middleware in middlewares.where(
       (element) => element.preHandle != null && element.path == path,

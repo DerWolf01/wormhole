@@ -20,7 +20,7 @@ class SocketServer extends SocketServerChangeNotifier {
           SocketServer._internal(socket: server, host: host, port: port);
 
       if (_instance != null) {
-        print("listening on localhost:3000");
+        print("server --> listening on localhost:3000");
       } else {
         throw Exception("failed to start server");
       }
