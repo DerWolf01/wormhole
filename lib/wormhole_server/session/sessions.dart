@@ -1,5 +1,5 @@
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
-import 'package:wormhole/server/session/session.dart';
+import 'package:wormhole/wormhole_server/session/session.dart';
 
 class Sessions {
   static Sessions? _instance;

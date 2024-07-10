@@ -1,23 +1,23 @@
 import 'dart:io';
 
-import 'package:wormhole/server/session/session.dart';
-import 'package:wormhole/server/session/sessions.dart';
+import 'package:wormhole/wormhole_server/session/session.dart';
+import 'package:wormhole/wormhole_server/session/sessions.dart';
 
-class SocketServer extends SocketServerChangeNotifier {
+class WormholeServer extends SocketServerChangeNotifier {
   final String host;
   final int port;
   final ServerSocket _socket;
-  static SocketServer? _instance;
-  SocketServer._internal(
+  static WormholeServer? _instance;
+  WormholeServer._internal(
       {required ServerSocket socket, required this.host, required this.port})
       : _socket = socket;
 
-  static Future<SocketServer?> init(
+  static Future<WormholeServer?> init(
       {String host = 'localhost', int port = 3000}) async {
     try {
       final server = await ServerSocket.bind("localhost", 3000);
       _instance ??=
-          SocketServer._internal(socket: server, host: host, port: port);
+          WormholeServer._internal(socket: server, host: host, port: port);
 
       if (_instance != null) {
         print("server --> listening on localhost:3000");
@@ -31,8 +31,8 @@ class SocketServer extends SocketServerChangeNotifier {
     return _instance;
   }
 
-  factory SocketServer() {
-    if (_instance == null) throw Exception('SocketServer not initialized');
+  factory WormholeServer() {
+    if (_instance == null) throw Exception('WormholeServer not initialized');
     return _instance!;
   }
 

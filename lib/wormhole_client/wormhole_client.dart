@@ -1,25 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:wormhole/client/client_message_service.dart';
+import 'package:wormhole/wormhole_client/client_message_service.dart';
 import 'package:wormhole/common/messages/socket_message/socket_message.dart'
     as messages;
 
-export 'client_socket.dart';
+export 'wormhole_client.dart';
 
-class ClientSocket extends ClientSocketChangeNotifier {
+class WormholeClient extends ClientSocketChangeNotifier {
   Socket? _socket;
 
-  static ClientSocket? _instance;
-  ClientSocket._internal();
-  static Future<ClientSocket?> connect() async {
-    var client = ClientSocket._internal();
+  static WormholeClient? _instance;
+  WormholeClient._internal();
+
+  /**Connects to the server and start listening when successful
+  */
+
+  static Future<WormholeClient?> connect() async {
+    var client = WormholeClient._internal();
     await client._connect('localhost', 3000);
     client.listen();
     return client;
   }
 
-  factory ClientSocket() {
-    if (_instance == null) throw Exception('ClientSocket not initialized');
+  factory WormholeClient() {
+    if (_instance == null) throw Exception('WormholeClient not initialized');
     return _instance!;
   }
   Future<void> _connect(String host, int port) async {
@@ -46,7 +50,6 @@ class ClientSocket extends ClientSocketChangeNotifier {
   }
 
   Future<void> send(messages.SocketMessage message) async {
-    
     if (_socket == null) {
       print('Not connected to any server');
       return;
@@ -84,7 +87,7 @@ class ClientSocket extends ClientSocketChangeNotifier {
   }
 }
 
-ClientSocket get clientSocket => ClientSocket();
+WormholeClient get clientSocket => WormholeClient();
 
 send(messages.SocketMessage message) async {
   await clientSocket.send(message);
@@ -92,7 +95,7 @@ send(messages.SocketMessage message) async {
 
 abstract class ClientSocketChangeNotifier {
   List<Function()> preConnectCallbacks = [];
-  List<Function(ClientSocket)> postConnectCallbacks = [];
+  List<Function(WormholeClient)> postConnectCallbacks = [];
 
   void addPreConnectCallback(Function() callback) {
     preConnectCallbacks.add(callback);
@@ -102,11 +105,11 @@ abstract class ClientSocketChangeNotifier {
     preConnectCallbacks.remove(callback);
   }
 
-  void addPostConnectCallback(Function(ClientSocket) callback) {
+  void addPostConnectCallback(Function(WormholeClient) callback) {
     postConnectCallbacks.add(callback);
   }
 
-  void removePostConnectCallback(Function(ClientSocket) callback) {
+  void removePostConnectCallback(Function(WormholeClient) callback) {
     postConnectCallbacks.remove(callback);
   }
 
@@ -116,7 +119,7 @@ abstract class ClientSocketChangeNotifier {
     }
   }
 
-  void callPostConnectCallbacks(ClientSocket session) {
+  void callPostConnectCallbacks(WormholeClient session) {
     for (var callback in postConnectCallbacks) {
       callback(session);
     }

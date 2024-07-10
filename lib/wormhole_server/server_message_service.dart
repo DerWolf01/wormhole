@@ -1,26 +1,28 @@
-import 'package:wormhole/client/client_socket/client_socket.dart';
 import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/controller/controller.dart';
 import 'package:wormhole/common/controller/controller_service.dart';
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
-import 'package:wormhole/common/middleware/middleware_service.dart';
 import 'package:wormhole/common/model/model.dart';
+import 'package:wormhole/wormhole_server/session/session.dart';
 
-class ClientMessageService extends ClientMessageServiceNotifier
+class ServerMessageService extends ServerMessageServiceNotifier
     with SocketMessageTypeRecognizer {
+  ServerMessageService(this.userSession);
+  final UserSession userSession;
   ControllerService controllerService = ControllerService();
-  ClientSocket get clientSocket => ClientSocket();
+
   Future receive(Map<String, dynamic> message) async {
+    assert(message["path"] != null, 'invalid data $message');
     if (message["path"] == null) {
-      print('invalid data $message');
-      return;
+      throw Exception('No path found in SocketMessage! $message');
     }
 
     if (isRequest(message)) {
-      await handleRequest(message);
+      print("is request");
+      handleRequest(message);
     } else if (isResponse(message)) {
-      await handleResponse(message);
+      handleResponse(message);
     } else {
       print("not a valid SocketMessage!");
       return;
@@ -32,37 +34,22 @@ class ClientMessageService extends ClientMessageServiceNotifier
     print('handleRequest-path: $path');
     var pingedMethod =
         controllerService.methodMirrorByFullPath<RequestHandler>(path);
+    print("pingedMethod: $pingedMethod");
     if (pingedMethod is AnnotatedMethod<RequestHandler>) {
-      Model? argument;
-      try {
-        pingedMethod.invokeMethodArgumentInstance(
-            constructorName: "fromMap", positionalArguments: [message]);
-        if (argument == null) {
-          throw Exception("Couldn't parse Model.");
-        }
-      } catch (e) {
-        throw Exception("""Couldn't parse Model.
-$e""");
-      }
-      MiddlewareService().preHandle(path, argument);
       var res = await pingedMethod.invokeUsingMap(message);
       if (res is Model) {
-        await clientSocket.send(SocketResponse(message["path"], res));
-        MiddlewareService().postHandle(path, argument);
+        userSession.send(SocketResponse(message["path"], res).toJson());
       }
     }
   }
 
-  handleResponse(Map<String, dynamic> message) async {
+  handleResponse(Map<String, dynamic> message) {
     var path = message["path"];
     print('handleResponse-path: $path');
-    AnnotatedMethod? pingedMethod =
-        controllerService.methodMirrorByFullPath<ResponseHandler>(path);
-    if (pingedMethod is AnnotatedMethod<ResponseHandler>) {
-      await pingedMethod.invokeUsingMap(message);
-    } else {
-      throw Exception(
-          "${pingedMethod?.partOf.runtimeType}.${(pingedMethod as AnnotatedMethod).method.simpleName}(${pingedMethod.methodArgumentType()}) is not a ResponseHandler!");
+    var pingedMethod =
+        controllerService.methodMirrorByFullPath<RequestHandler>(path);
+    if (pingedMethod is AnnotatedMethod<RequestHandler>) {
+      pingedMethod.invoke([message]);
     }
     notifyResponseListeners(message);
   }
@@ -78,7 +65,7 @@ mixin class SocketMessageTypeRecognizer {
   }
 }
 
-class ClientMessageServiceNotifier {
+class ServerMessageServiceNotifier {
   final List<Function(dynamic value)> _responseListeners = [];
 
   void addResponseListener(Function(dynamic) listener) {
