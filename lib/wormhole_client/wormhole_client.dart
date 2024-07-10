@@ -6,19 +6,24 @@ import 'package:wormhole/common/messages/socket_message/socket_message.dart'
 
 export 'wormhole_client.dart';
 
+late final WormholeClient? wormholeClient;
+
 class WormholeClient extends ClientSocketChangeNotifier {
   Socket? _socket;
 
   static WormholeClient? _instance;
+
   WormholeClient._internal();
 
   /**Connects to the server and start listening when successful
-  */
+   */
 
   static Future<WormholeClient?> connect() async {
     var client = WormholeClient._internal();
     await client._connect('localhost', 3000);
     client.listen();
+    _instance ??= client;
+    wormholeClient = client;
     return client;
   }
 
@@ -26,6 +31,7 @@ class WormholeClient extends ClientSocketChangeNotifier {
     if (_instance == null) throw Exception('WormholeClient not initialized');
     return _instance!;
   }
+
   Future<void> _connect(String host, int port) async {
     try {
       callPreConnectCallbacks();
