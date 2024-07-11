@@ -52,8 +52,16 @@ class ControllerService {
   ///
   /// Returns:
   ///   The controller instance associated with the extracted path.
-  Object controllerByFullPath(String fullPath) {
-    return _controllerMap[_pathByFullPath(fullPath)];
+  dynamic controllerByFullPath(String fullPath) {
+    dynamic controller;
+    try {
+      controller = _controllerMap[_pathByFullPath(fullPath)];
+      if (controller == null) {
+        throw Exception("No Controller registered with path: $fullPath");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   /// Extracts the controller path from the full path of a request.
