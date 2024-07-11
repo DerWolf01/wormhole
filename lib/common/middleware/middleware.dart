@@ -4,6 +4,7 @@ import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/middleware/middleware_service.dart';
 import 'package:wormhole/common/model/model.dart';
 import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:wormhole/wormhole.dart';
 
 /// Callback type for handling pre-middleware actions.
 ///
@@ -26,6 +27,9 @@ typedef PostHandle<T extends SerializableModel> = FutureOr<void>
 ///   - [path]: The path on which the middleware should be applied.
 ///   - [preHandle]: An optional callback to be executed before the main middleware logic.
 ///   - [postHandle]: An optional callback to be executed after the main middleware logic.
+///
+///
+///
 @component
 class Middleware<T extends SerializableModel> {
   /// Constructs a [Middleware] instance.
@@ -52,3 +56,4 @@ class Middleware<T extends SerializableModel> {
     MiddlewareService().registerMiddleware(this);
   }
 }
+var m =Middleware<SocketMessage>("/example", preHandle: (accepts) async => true, postHandle: (controllerAccepted, {controllerReturned}) async => print(controllerAccepted))..register();
