@@ -4,10 +4,10 @@ Wormhole is a Dart-based server-client communication framework that leverages co
 
 ## Features
 
-- **Controller-Based Architecture**: Organize your code into controllers to handle specific paths and actions, improving modularity and readability.
-- **Reflectable**: Utilizes Dart's reflectable package for runtime reflection, enabling dynamic invocation of methods based on request paths.
+- **Controller-Based Architecture**: Organize your code into controllers for both server & client to handle specific paths and actions, improving modularity and readability.
 - **Middleware Support**: Easily add middleware for request preprocessing and postprocessing.
 - **Serializable Models**: Define models that can be automatically serialized and deserialized from JSON, streamlining client-server data exchange.
+- **Reflectable**: Utilizes Dart's reflectable package for runtime reflection, enabling dynamic invocation of methods based on request paths.
 
 ## Getting Started
 
@@ -18,30 +18,73 @@ To get started with Wormhole, follow these steps:
 
           ```yaml
           dependencies:
+            wormhole: ^latest_version
             reflectable: ^latest_version
             analyzer: ^6.4.0
           dev_dependencies:
             build_runner: ^latest_version
           ```
+   2. **Define Controllers**: Create controllers annotated with `@Controller` to handle specific paths and actions. Use `@RequestHandler` and `@ResponseHandler` to define methods for handling requests and responses. 
+      
 
-2. **Define Controllers**: Create controllers annotated with `@Controller` to handle specific paths and actions. Use `@RequestHandler` and `@ResponseHandler` to define methods for handling requests and responses.
+```dart 
+//server side code   
+@Controller('/example')
+@component
+class ExampleControllerServer {
 
-    ```dart
-    import 'package:wormhole/wormhole.dart';
-   
-    @Controller('/example')
-    class ExampleController {
-      @RequestHandler('/sayHello')
-      String sayHello(SocketMessage request) {
-        return SocketMessage('Hello Server!');
-      }
-   
-        @ResponseHandler("/sayHello")
-        String sayHelloResponse(SocketMessage response) {
-          print("Server said Hello! $response");
-        }
-    }
-    ```
+  // This method will now act as an handler for the path /example/sayHello
+  // It has to return SocketMessage as value & has to match the same argument type of the handler in the client side!
+  // If it doesn't either on the client- or server side an exception will be thrown because of incompatible types
+
+  @RequestHandler('/sayHello')
+  SocketMessage sayHello(SocketMessage request) {
+    // this will be the response to the client
+    print("client says: ${request.text}");
+    return SocketMessage('Hello Client!');
+  }
+}
+//... 
+   ```
+```dart
+import 'package:wormhole/wormhole.dart';
+
+// This class will be available on both client and server side
+@component
+class SocketMessage extends SerializableModel {
+  String text;
+
+  SocketMessage(this.text);
+
+//...member methods: toJson, toMap...
+}
+
+//...server side code 
+
+
+//...client side code 
+@component
+@Controller('/example')
+class ExampleControllerClient {
+
+  // This method will now act as an response handler for the path /example/sayHello
+  // It has no response handler as it is an response handler only!
+  // If it doesn't either on the client- or server side an exception will be thrown because of incompatible types
+  // The Response and Request handler with the sane paths have to match the same types when it comes to the handler argument  
+  @ResponseHandler('/sayHello')
+  void sayHello(SocketMessage response) {
+    print("server says: ${response.text}");
+    //... 
+  }
+}
+//...
+void main() async {
+  WormholeClient client = await WormholeClient.connect("localhost", 3000);
+  // this will send the message to the server
+  // the above defined controller will handle everything else
+  await ClientMessageService().send(SocketMessage("Hello Server!"));
+}
+```
 
 3. **Register Controllers**: Before running your application, register your controllers with the framework.
 
@@ -74,7 +117,7 @@ To get started with Wormhole, follow these steps:
       anonymousMiddleware("/example", preHandle: (UInt8List request) {
         print("Middleware for /example");
         return true;
-      }, postHandle: (controllerAccepted, {controllerReturned}) {
+      }, postHandle: (SerializableModel controllerAccepted, {SerializableModel? controllerReturned}) {
         print("Middleware for /example");
       });
       // Start your server or client
@@ -99,6 +142,7 @@ To get started with Wormhole, follow these steps:
     import 'wormhole.reflectable.dart';
   
     void main() {
+      ControllerService().registerController(ExampleController());
       initializeReflectable();
       // Register controllers and start your server or client
     }
