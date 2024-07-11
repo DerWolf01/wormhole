@@ -1,22 +1,10 @@
 import 'package:wormhole/common/component/component.dart';
-import 'package:wormhole/common/messages/socket_request/socket_request.dart';
-import 'package:wormhole/common/messages/socket_response/socket_response.dart';
 import 'package:wormhole/common/model/model.dart';
 import 'package:wormhole/common/model/serializable_model.dart';
 export './socket_message.dart';
 
 /// Enum representing the types of socket messages.
 enum SocketMessageType { request, response }
-
-/// Extension on [SocketMessageType] to provide a mapping to the corresponding class type.
-extension on SocketMessageType {
-  /// Returns the class type associated with the socket message type.
-  ///
-  /// - Returns [SocketRequest] for `SocketMessageType.request`.
-  /// - Returns [SocketResponse] for `SocketMessageType.response`.
-  Type get type =>
-      this == SocketMessageType.request ? SocketRequest : SocketResponse;
-}
 
 /// An abstract class representing a generic socket message.
 ///

@@ -7,7 +7,6 @@ import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/controller/controller.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
 import 'package:wormhole/common/middleware/middleware_service.dart';
-import 'package:wormhole/common/model/model.dart';
 
 class ClientMessageService extends SocketMessageService
     with SocketMessageTypeRecognizer {

@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:wormhole/common/messages/socket_message_service.dart';
-import 'package:wormhole/common/middleware/middleware_service.dart';
-import 'package:wormhole/wormhole_server/server_message_service.dart';
-import 'package:wormhole/wormhole_server/session/client_sessions.dart';
+import 'package:wormhole/wormhole.dart';
 
 /// Represents a client session with a unique session ID and socket connection.
 ///
@@ -52,8 +50,6 @@ class ClientSession {
           print(e);
         }
         await socketMessageService.receive(json);
-
-
       },
       onError: (error) {
         // Handle socket error
@@ -61,8 +57,8 @@ class ClientSession {
       },
       onDone: () {
         // Handle socket closed
-        print('Socket closed');
         ClientSessions().removeSession(this);
+        print('Socket closed');
       },
     );
   }

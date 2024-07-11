@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:wormhole/common/model/model.dart';
 import 'package:wormhole/common/model/serializable_model.dart';
 import 'middleware.dart';
 

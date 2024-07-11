@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:reflectable/reflectable.dart';
 import 'package:wormhole/common/model/model.dart';
 export './component.dart';
@@ -68,9 +70,11 @@ class AnnotatedMethod<AnotatedWith> {
     return res;
   }
 
-  Model? invoke(List<dynamic> positionalArguments) {
-    return instanceMirror(partOf).invoke(method.simpleName, positionalArguments)
-        as Model?;
+  FutureOr<T>? invoke<T extends Model>(
+      List<dynamic> positionalArguments) async {
+    return await (instanceMirror(partOf)
+        .invoke(method.simpleName, positionalArguments) as FutureOr<T>);
+
   }
 
   Future<T> invokeUsingMap<T extends Model?>(Map map) async {
@@ -81,7 +85,7 @@ class AnnotatedMethod<AnotatedWith> {
     } catch (e) {
       print(e);
     }
-    return await instanceMirror(partOf).invoke(method.simpleName, [argument])
-        as T;
+    return await (instanceMirror(partOf).invoke(method.simpleName, [argument])
+        as FutureOr<T>);
   }
 }

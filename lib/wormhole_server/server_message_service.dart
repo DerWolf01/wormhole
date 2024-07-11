@@ -83,16 +83,17 @@ class ServerMessageService extends SocketMessageService
       notifyResponseListeners(message);
     }
 
-    /// Sends a serialized model to the client.
-    ///
-    /// This method overrides the [send] method from [SocketMessageService] to provide
-    /// specific logic for sending messages to the client. It serializes the [SerializableModel]
-    /// to JSON and sends it through the user session.
-    ///
-    /// Parameters:
-    ///   - [m]: The model to be sent, which must be a [SerializableModel].
+    return null;
   }
 
+  /// Sends a serialized model to the client.
+  ///
+  /// This method overrides the [send] method from [SocketMessageService] to provide
+  /// specific logic for sending messages to the client. It serializes the [SerializableModel]
+  /// to JSON and sends it through the user session.
+  ///
+  /// Parameters:
+  ///   - [m]: The model to be sent, which must be a [SerializableModel].
   @override
   FutureOr send(SerializableModel m) {
     userSession.send(m.toJson());
