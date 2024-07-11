@@ -1,41 +1,28 @@
+import 'dart:async';
+
+import 'package:wormhole/common/messages/socket_message_service.dart';
+import 'package:wormhole/common/model/serializable_model.dart';
 import 'package:wormhole/wormhole_client/wormhole_client.dart';
 import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/controller/controller.dart';
-import 'package:wormhole/common/controller/controller_service.dart';
-import 'package:wormhole/common/messages/socket_message/socket_message.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
 import 'package:wormhole/common/middleware/middleware_service.dart';
 import 'package:wormhole/common/model/model.dart';
 
-class ClientMessageService extends ClientMessageServiceNotifier
+class ClientMessageService extends SocketMessageService
     with SocketMessageTypeRecognizer {
-  ControllerService controllerService = ControllerService();
-  WormholeClient get clientSocket => WormholeClient();
-  Future receive(Map<String, dynamic> message) async {
-    if (message["path"] == null) {
-      print('invalid data $message');
-      return;
-    }
+  WormholeClient get wormholeClient => WormholeClient();
 
-    if (isRequest(message)) {
-      await handleRequest(message);
-    } else if (isResponse(message)) {
-      await handleResponse(message);
-    } else {
-      print("not a valid SocketMessage!");
-      return;
-    }
-  }
-
+  @override
   handleRequest(Map<String, dynamic> message) async {
     var path = message["path"];
     print('handleRequest-path: $path');
     var pingedMethod =
         controllerService.methodMirrorByFullPath<RequestHandler>(path);
     if (pingedMethod is AnnotatedMethod<RequestHandler>) {
-      Model? argument;
+      SerializableModel? argument;
       try {
-        pingedMethod.invokeMethodArgumentInstance(
+        argument = pingedMethod.invokeMethodArgumentInstance(
             constructorName: "fromMap", positionalArguments: [message]);
         if (argument == null) {
           throw Exception("Couldn't parse Model.");
@@ -44,54 +31,37 @@ class ClientMessageService extends ClientMessageServiceNotifier
         throw Exception("""Couldn't parse Model.
 $e""");
       }
-      MiddlewareService().preHandle(path, argument);
-      var res = await pingedMethod.invokeUsingMap(message);
-      if (res is Model) {
-        await clientSocket.send(SocketResponse(message["path"], res));
-        MiddlewareService().postHandle(path, argument);
+      var res = await pingedMethod.invoke([argument]);
+      if (res is SerializableModel) {
+        await send(SocketResponse(message["path"], res));
+        MiddlewareService().postHandle(path,
+            controllerAccepted: argument, controllerReturned: res);
       }
     }
   }
 
+  @override
   handleResponse(Map<String, dynamic> message) async {
     var path = message["path"];
     print('handleResponse-path: $path');
     AnnotatedMethod? pingedMethod =
         controllerService.methodMirrorByFullPath<ResponseHandler>(path);
     if (pingedMethod is AnnotatedMethod<ResponseHandler>) {
-      await pingedMethod.invokeUsingMap(message);
+      var argument = pingedMethod.invokeMethodArgumentInstance(
+          constructorName: "fromMap", positionalArguments: [message]);
+
+      await pingedMethod.invoke([argument]);
+      await MiddlewareService().postHandle(path,
+          controllerAccepted: argument, controllerReturned: null);
     } else {
       throw Exception(
           "${pingedMethod?.partOf.runtimeType}.${(pingedMethod as AnnotatedMethod).method.simpleName}(${pingedMethod.methodArgumentType()}) is not a ResponseHandler!");
     }
     notifyResponseListeners(message);
   }
-}
 
-mixin class SocketMessageTypeRecognizer {
-  isRequest(Map<String, dynamic> message) {
-    return message["type"] == SocketMessageType.request.index;
-  }
-
-  isResponse(Map<String, dynamic> message) {
-    return message["type"] == SocketMessageType.response.index;
-  }
-}
-
-class ClientMessageServiceNotifier {
-  final List<Function(dynamic value)> _responseListeners = [];
-
-  void addResponseListener(Function(dynamic) listener) {
-    _responseListeners.add(listener);
-  }
-
-  void removeResponseListener(Function(dynamic) listener) {
-    _responseListeners.remove(listener);
-  }
-
-  void notifyResponseListeners(dynamic data) {
-    for (var listener in _responseListeners) {
-      listener(data);
-    }
+  @override
+  FutureOr send(SerializableModel m) {
+    wormholeClient.send(m.toJson());
   }
 }

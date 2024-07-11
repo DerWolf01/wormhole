@@ -40,7 +40,7 @@ List<MethodMirror> methods(dynamic element) {
       .toList();
 }
 
-List<AnnotatedMethod<T>> methodsAnnotatedWith<T>(dynamic element) {
+List<AnnotatedMethod<T>> annotatedMethods<T>(dynamic element) {
   return methods(element)
       .where((element) => element.metadata.whereType<T>().firstOrNull != null)
       .map(

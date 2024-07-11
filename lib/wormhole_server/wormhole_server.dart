@@ -1,21 +1,50 @@
 import 'dart:io';
+import 'package:wormhole/wormhole_server/session/client_session.dart';
+import 'package:wormhole/wormhole_server/session/client_sessions.dart';
 
-import 'package:wormhole/wormhole_server/session/session.dart';
-import 'package:wormhole/wormhole_server/session/sessions.dart';
-
-class WormholeServer extends SocketServerChangeNotifier {
+/// Represents the server in the Wormhole application.
+///
+/// This class encapsulates the functionality required to initialize, configure,
+/// and run a server that listens for incoming socket connections. It manages
+/// client sessions and handles incoming connections by creating and tracking
+/// [ClientSession] instances.
+class WormholeServer {
+  /// The host address the server listens on.
   final String host;
+
+  /// The port number the server listens on.
   final int port;
+
+  /// The underlying server socket.
   final ServerSocket _socket;
+
+  /// Singleton instance of [WormholeServer].
   static WormholeServer? _instance;
+
+  /// Private constructor for [WormholeServer].
+  ///
+  /// Initializes a new instance of the server with the provided socket, host, and port.
   WormholeServer._internal(
       {required ServerSocket socket, required this.host, required this.port})
       : _socket = socket;
 
+  /// Initializes the server asynchronously.
+  ///
+  /// Attempts to bind the server to the specified host and port. If successful,
+  /// it creates or returns the singleton instance of the server. If the server
+  /// fails to start, it prints an error message.
+  ///
+  /// Parameters:
+  ///   - [host]: The host address to bind the server to. Defaults to 'localhost'.
+  ///   - [port]: The port number to bind the server to. Defaults to 3000.
+  ///
+  /// Returns:
+  ///   A [Future] that resolves to the singleton instance of [WormholeServer] if
+  ///   the server is successfully started, or null if the server fails to start.
   static Future<WormholeServer?> init(
       {String host = 'localhost', int port = 3000}) async {
     try {
-      final server = await ServerSocket.bind("localhost", 3000);
+      final server = await ServerSocket.bind(host, port);
       _instance ??=
           WormholeServer._internal(socket: server, host: host, port: port);
 
@@ -31,20 +60,31 @@ class WormholeServer extends SocketServerChangeNotifier {
     return _instance;
   }
 
+  /// Factory constructor for [WormholeServer].
+  ///
+  /// Returns the singleton instance of [WormholeServer]. Throws an exception if
+  /// the server has not been initialized.
   factory WormholeServer() {
     if (_instance == null) throw Exception('WormholeServer not initialized');
     return _instance!;
   }
 
+  /// Starts listening for incoming connections.
+  ///
+  /// This method sets up the server to listen on the configured host and port.
+  /// For each incoming connection, it creates a new [ClientSession], starts it,
+  /// and adds it to the list of active sessions.
   listen() {
-    print("listening on $host$port");
+    print("listening on $host:$port");
     _socket.listen(
-      (socket) {
-        callPreConnectCallbacks(socket);
-        var session = UserSession(socket);
+          (socket) {
+        // if (!callPreConnectCallbacks(socket)) {
+        //   return;
+        // }
+        var session = ClientSession(socket);
         session.start();
-        Sessions().addSession(session);
-        callPostConnectCallbacks(session);
+        ClientSessions().addSession(session);
+        // callPostConnectCallbacks(session);
       },
       onError: (error) {
         print('Socket error: $error');
@@ -56,35 +96,5 @@ class WormholeServer extends SocketServerChangeNotifier {
   }
 }
 
-abstract class SocketServerChangeNotifier {
-  List<Function(Socket)> preConnectCallbacks = [];
-  List<Function(UserSession)> postConnectCallbacks = [];
-
-  void addPreConnectCallback(Function(Socket) callback) {
-    preConnectCallbacks.add(callback);
-  }
-
-  void removePreConnectCallback(Function(Socket) callback) {
-    preConnectCallbacks.remove(callback);
-  }
-
-  void addPostConnectCallback(Function(UserSession) callback) {
-    postConnectCallbacks.add(callback);
-  }
-
-  void removePostConnectCallback(Function(UserSession) callback) {
-    postConnectCallbacks.remove(callback);
-  }
-
-  void callPreConnectCallbacks(Socket socket) {
-    for (var callback in preConnectCallbacks) {
-      callback(socket);
-    }
-  }
-
-  void callPostConnectCallbacks(UserSession session) {
-    for (var callback in postConnectCallbacks) {
-      callback(session);
-    }
-  }
-}
+/// Provides a global accessor for the [WormholeServer] singleton.
+WormholeServer get wormholeServer => WormholeServer();
