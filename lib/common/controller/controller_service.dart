@@ -53,6 +53,7 @@ class ControllerService {
   /// Returns:
   ///   The controller instance associated with the extracted path.
   dynamic controllerByFullPath(String fullPath) {
+    print(_controllerMap);
     dynamic controller;
     try {
       controller = _controllerMap[_pathByFullPath(fullPath)];
@@ -62,6 +63,7 @@ class ControllerService {
     } catch (e) {
       print("Error: $e");
     }
+    return controller;
   }
 
   /// Extracts the controller path from the full path of a request.
