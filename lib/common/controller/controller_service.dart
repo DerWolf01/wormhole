@@ -140,17 +140,24 @@ class ControllerService {
   ///   if no matching method is found.
   AnnotatedMethod? methodMirrorByFullPath<AnnotatedWith extends RequestType>(
       String fullPath) {
-    var controller = controllerByFullPath(fullPath);
-    var mPath = methodPath(fullPath);
+    try {
+      var controller = controllerByFullPath(fullPath);
+      if (controller == null) {
+        throw Exception("No Controller registered with path: $fullPath");
+      }
+      var mPath = methodPath(fullPath);
 
-    AnnotatedMethod? res = annotatedMethods<AnnotatedWith>(controller)
-        .where(
-          (e) => e.annotation.path == mPath,
-        )
-        .firstOrNull;
+      AnnotatedMethod? res = annotatedMethods<AnnotatedWith>(controller)
+          .where(
+            (e) => e.annotation.path == mPath,
+          )
+          .firstOrNull;
 
-    print("Annotated method found --> ${res?.method.simpleName} --> $res  ");
+      print("Annotated method found --> ${res?.method.simpleName} --> $res  ");
 
-    return res;
+      return res;
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 }
