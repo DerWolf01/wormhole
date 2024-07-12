@@ -153,7 +153,7 @@ class ControllerService {
 
       AnnotatedMethod? res = annotatedMethods<AnnotatedWith>(controller)
           .where(
-            (e) => e.annotation.getpath == mPath,
+            (e) => e.annotation.getPath == mPath,
           )
           .firstOrNull;
 
@@ -163,5 +163,6 @@ class ControllerService {
     } catch (e) {
       print("Error: $e");
     }
+    return null;
   }
 }
