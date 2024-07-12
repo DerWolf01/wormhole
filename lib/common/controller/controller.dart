@@ -14,6 +14,8 @@ class Controller {
   /// This path is used by the routing mechanism to direct requests to the appropriate controller.
   final String path;
 
+  String get getPath => path.startsWith("/") ? path : '/$path';
+
   /// Constructs a [Controller] instance with the given path.
   const Controller(this.path);
 
@@ -38,6 +40,8 @@ abstract class RequestType {
   ///
   /// This path is used by the routing mechanism to match incoming requests to their handlers.
   final String path;
+
+  String get getPath => path.startsWith("/") ? path : '/$path';
 
   /// Constructs a [RequestType] instance with the given path.
   const RequestType(this.path);
