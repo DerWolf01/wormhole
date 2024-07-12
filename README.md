@@ -58,9 +58,7 @@ class SocketMessage extends SerializableModel {
 
 //...member methods: toJson, toMap...
 }
-
-//...server side code 
-
+ 
 
 //...client side code 
 @component
@@ -68,7 +66,7 @@ class SocketMessage extends SerializableModel {
 class ExampleControllerClient {
 
   // This method will now act as an response handler for the path /example/sayHello
-  // It has no response handler as it is an response handler only!
+  // It will not be used to responed the server as it is an response handler only!
   // If it doesn't either on the client- or server side an exception will be thrown because of incompatible types
   // The Response and Request handler with the sane paths have to match the same types when it comes to the handler argument  
   @ResponseHandler('/sayHello')
