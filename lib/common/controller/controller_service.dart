@@ -23,8 +23,10 @@ class ControllerService {
   ///
   /// Parameters:
   ///   - [controller]: The controller instance to register.
-  registerController(dynamic controller) {
-    var path = Controller.byImplementation(controller).path;
+  registerController(dynamic controllerImpl) {
+    Controller controller = Controller.byImplementation(controllerImpl);
+    var path = controller.getPath;
+
     _controllerMap[path] = controller;
   }
 
@@ -151,7 +153,7 @@ class ControllerService {
 
       AnnotatedMethod? res = annotatedMethods<AnnotatedWith>(controller)
           .where(
-            (e) => e.annotation.path == mPath,
+            (e) => e.annotation.getpath == mPath,
           )
           .firstOrNull;
 

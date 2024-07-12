@@ -99,7 +99,7 @@ An <a href="../../common_component_component/AnnotatedMethod-class.html">Annotat
 
   AnnotatedMethod? res = annotatedMethods&lt;AnnotatedWith&gt;(controller)
       .where(
-        (e) =&gt; e.annotation.path == mPath,
+        (e) =&gt; e.annotation.getPath == mPath,
       )
       .firstOrNull;
 

@@ -43,6 +43,7 @@ class ServerMessageService extends SocketMessageService
         var argument = pingedMethod.invokeMethodArgumentInstance(
             constructorName: "fromMap", positionalArguments: [message]);
         var res = await pingedMethod.invoke([argument]);
+
         if (res is SerializableModel) {
           await send(SocketResponse(message["path"], res));
           await MiddlewareService().postHandle(path,
