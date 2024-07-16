@@ -1,6 +1,6 @@
 # Wormhole
 
-Wormhole is a Dart-based server-client communication framework that leverages controllers and the reflectable package to dynamically handle requests and responses. It provides a structured way to manage socket communication, making it easier to develop scalable and maintainable real-time applications.
+Wormhole is a Dart-based open source server-client communication framework that leverages controllers and the reflectable package to dynamically handle requests and responses. It provides a structured way to manage socket communication, making it easier to develop scalable and maintainable real-time applications.
 
 ## Features
 
