@@ -78,13 +78,11 @@ class WormholeServer {
     print("listening on $host:$port");
     _socket.listen(
           (socket) {
-        // if (!callPreConnectCallbacks(socket)) {
-        //   return;
-        // }
+
         var session = ClientSession(socket);
         session.start();
         ClientSessions().addSession(session);
-        // callPostConnectCallbacks(session);
+
       },
       onError: (error) {
         print('Socket error: $error');

@@ -1,8 +1,9 @@
 import 'package:wormhole/common/component/component.dart';
-import 'package:wormhole/common/model/model.dart';
+
+import 'package:dart_model/dart_model.dart';
 
 @component
-class SimpleMessage extends Model {
+class SimpleMessage extends SerializableModel {
   const SimpleMessage(this.message);
   final String message;
 
@@ -14,7 +15,4 @@ class SimpleMessage extends Model {
   }
 
   SimpleMessage.fromMap(Map<String, dynamic> map) : message = map["message"];
-  String toJson() {
-    return '{message: $message}';
-  }
 }

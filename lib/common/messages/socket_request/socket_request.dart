@@ -1,6 +1,7 @@
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
 
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:dart_model/dart_model.dart';
+
 export './socket_request.dart';
 
 /// Represents a request sent over a socket connection.
@@ -16,4 +17,6 @@ export './socket_request.dart';
 class SocketRequest<T extends SerializableModel> extends SocketMessage<T> {
   SocketRequest(final String path, final T content)
       : super(path, content, SocketMessageType.request);
+
+  bool pending = false;
 }

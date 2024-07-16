@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:wormhole/common/controller/controller_service.dart';
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:wormhole/common/messages/socket_response/socket_response.dart';
+import 'package:dart_model/dart_model.dart';
 
 abstract class SocketMessageService extends SocketMessageServiceNotifier
     with SocketMessageTypeRecognizer {
@@ -28,7 +29,30 @@ abstract class SocketMessageService extends SocketMessageServiceNotifier
 
   FutureOr handleResponse(Map<String, dynamic> message);
 
-  FutureOr send(SerializableModel m);
+  FutureOr<SerializableModel?> send(SocketMessage m);
+  FutureOr<SerializableModel?> onSend(SocketMessage m) async {
+    m.pending = true;
+    bool pending = true;
+    late SerializableModel? response;
+
+    try {
+      oneTimerController(
+        m.path,
+        (data) {
+          pending = false;
+          response = data;
+        },
+      );
+      await Future.doWhile(
+        () {
+          return pending;
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+    return response;
+  }
 }
 
 mixin class SocketMessageTypeRecognizer {

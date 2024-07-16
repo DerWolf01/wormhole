@@ -1,6 +1,5 @@
 import 'package:wormhole/common/component/component.dart';
-import 'package:wormhole/common/model/model.dart';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:dart_model/dart_model.dart';
 export './socket_message.dart';
 
 /// Enum representing the types of socket messages.
@@ -20,6 +19,8 @@ abstract class SocketMessage<T extends SerializableModel>
   ///   - [content]: The content of the message, constrained to types extending [Model].
   ///   - [type]: The type of the socket message, defined by [SocketMessageType].
   SocketMessage(this.path, this.content, this.type);
+
+  bool pending = false;
 
   /// The type of the socket message.
   final SocketMessageType type;

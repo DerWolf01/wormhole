@@ -25,6 +25,7 @@ class ClientSessions {
   ///   - [session]: The client session to add.
   void addSession(ClientSession session) {
     _clientSessions.add(session);
+    print("added client session ${session.sessionId}");
   }
 
   /// Removes a [ClientSession] from the collection based on its session ID.

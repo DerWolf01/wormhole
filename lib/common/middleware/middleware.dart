@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:dart_model/dart_model.dart';
 import 'package:wormhole/wormhole.dart';
 
 /// Callback type for handling pre-middleware actions.
@@ -52,4 +53,9 @@ class Middleware<T extends SerializableModel> {
     MiddlewareService().registerMiddleware(this);
   }
 }
-var m =Middleware<SocketMessage>("/example", preHandle: (accepts) async => true, postHandle: (controllerAccepted, {controllerReturned}) async => print(controllerAccepted))..register();
+
+var m = Middleware<SocketMessage>("/example",
+    preHandle: (accepts) async => true,
+    postHandle: (controllerAccepted, {controllerReturned}) async =>
+        print(controllerAccepted))
+  ..register();

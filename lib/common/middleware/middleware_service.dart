@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:dart_model/dart_model.dart';
+
 import 'middleware.dart';
 
 /// A service for managing middleware in the application.

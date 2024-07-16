@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:wormhole/common/messages/socket_message_service.dart';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:wormhole/common/messages/socket_request/socket_request.dart';
+import 'package:dart_model/dart_model.dart';
+
+import 'package:wormhole/wormhole.dart';
 import 'package:wormhole/wormhole_client/wormhole_client.dart';
 import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/controller/controller.dart';
@@ -60,7 +63,8 @@ $e""");
   }
 
   @override
-  FutureOr send(SerializableModel m) {
+  FutureOr<SerializableModel?> send(SocketMessage m) async {
     wormholeClient.send(m.toJson());
+    return await super.onSend(m);
   }
 }

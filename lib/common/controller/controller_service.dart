@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:characters/characters.dart';
 import 'package:wormhole/common/component/component.dart';
 import 'package:wormhole/common/controller/controller.dart';
+import 'package:dart_model/dart_model.dart';
+
 export './controller_service.dart';
 
 class ControllerService {
   final Map<String, dynamic> _controllerMap = {};
+  final Map<String, List<AnonymousController>> _anonymousControllerMap = {};
   static ControllerService? _instance;
 
   ControllerService._internal();
@@ -165,4 +170,16 @@ class ControllerService {
     }
     return null;
   }
+}
+
+typedef AnonymousController = FutureOr Function(SerializableModel data);
+
+FutureOr oneTimerController(String path, AnonymousController callback) async {
+  ControllerService()._anonymousControllerMap[path] ??= [];
+  ControllerService()
+      ._anonymousControllerMap[path]!
+      .add((SerializableModel data) async {
+    await callback(data);
+    ControllerService()._anonymousControllerMap[path]!.remove(callback);
+  });
 }

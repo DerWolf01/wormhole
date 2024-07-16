@@ -4,7 +4,9 @@ import 'package:wormhole/common/controller/controller.dart';
 import 'package:wormhole/common/messages/socket_message_service.dart';
 import 'package:wormhole/common/messages/socket_response/socket_response.dart';
 import 'package:wormhole/common/middleware/middleware_service.dart';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:dart_model/dart_model.dart';
+
+import 'package:wormhole/wormhole.dart';
 import 'package:wormhole/wormhole_server/session/client_session.dart';
 
 /// Provides server-side message handling services for the Wormhole application.
@@ -96,7 +98,8 @@ class ServerMessageService extends SocketMessageService
   /// Parameters:
   ///   - [m]: The model to be sent, which must be a [SerializableModel].
   @override
-  FutureOr send(SerializableModel m) {
+  FutureOr<SerializableModel?> send(SocketMessage m) async {
     userSession.send(m.toJson());
+    return await super.onSend(m);
   }
 }

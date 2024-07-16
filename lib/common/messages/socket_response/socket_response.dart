@@ -1,5 +1,5 @@
 import 'package:wormhole/common/messages/socket_message/socket_message.dart';
-import 'package:wormhole/common/model/serializable_model.dart';
+import 'package:dart_model/dart_model.dart';
 
 /// Represents a response sent over a socket connection.
 ///
